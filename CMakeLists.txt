@@ -17,3 +17,7 @@ find_package(OpenGL REQUIRED)
 
 include_directories(${OPENGL_INCLUDE_DIR})
 target_link_libraries(advgraph ${OPENGL_gl_LIBRARY})
+
+include_directories(deps/glad/include)
+add_subdirectory(deps/glad)
+target_link_libraries(advgraph glad)

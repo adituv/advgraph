@@ -28,5 +28,16 @@ typedef struct {
 
 typedef Vector4 Color;
 
+typedef struct {
+    float scalar;
+    Vector3 vector;
+} Quaternion;
+
+Vector3 smul(float, Vector3);
+float dot(Vector3, Vector3);
+Vector3 cross(Vector3, Vector3);
+Quaternion multQ(Quaternion, Quaternion);
+Vector3 rotate(Vector3, Quaternion);
+
 #endif
 

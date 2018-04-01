@@ -1,10 +1,14 @@
 cmake_minimum_required (VERSION 2.6)
 Project (advgraph)
-add_executable(advgraph src/main.c)
+
+file(GLOB_RECURSE advgraph_SOURCES "src/*.c")
+file(GLOB_RECURSE advgraph_HEADERS "src/*.h")
+include_directories("src")
 
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
+add_executable(advgraph ${advgraph_SOURCES})
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
@@ -21,3 +25,4 @@ target_link_libraries(advgraph ${OPENGL_gl_LIBRARY})
 include_directories(deps/glad/include)
 add_subdirectory(deps/glad)
 target_link_libraries(advgraph glad)
+

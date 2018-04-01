@@ -1,8 +1,11 @@
-#include "stdio.h"
-#include "stdlib.h"
-
+#include <stdio.h>
+#include <stdlib.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
+#include "model.h"
+
+#define FALSE 0
 
 GLuint loadShader(GLenum shaderType, const char* path);
 
@@ -45,14 +48,45 @@ int main(void)
     glLinkProgram(program);
     glUseProgram(program);
 
-    float coords[9];
+    // Temporary: render a triangle
+    Vector3 vertices[3] = { { 0.0f,  0.0f, 0.0f},
+                            { 0.5f, -0.5f, 0.0f},
+                            {-0.5f, -0.5f, 0.0f} };
+    Color vColors[3] = { { 1.0f, 0.0f, 0.0f, 1.0f },
+                         { 0.0f, 1.0f, 0.0f, 1.0f },
+                         { 0.0f, 0.0f, 1.0f, 1.0f }};
+    Model triangle = { vertices, vColors, 1,
+                       {0,0,0}, {0,0,0}, 1.0f
+                     };
 
+    GLuint vLoc = glGetAttribLocation(program, "vPos");
+    GLuint cLoc = glGetAttribLocation(program, "vColor");
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+    glEnableVertexAttribArray(vLoc);
+    glEnableVertexAttribArray(cLoc);
+
+    GLuint buffers[2];
+    glGenBuffers(2, buffers);
+
+    GLuint vbo_vertices = buffers[0];
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
+    glBufferData(GL_ARRAY_BUFFER, 4*3*3, triangle.vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(vLoc, 3, GL_FLOAT, FALSE, 0, 0);
+
+    GLuint vbo_colors = buffers[1];
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_colors);
+    glBufferData(GL_ARRAY_BUFFER, 4*4*3, triangle.vColors, GL_STATIC_DRAW);
+    glVertexAttribPointer(cLoc, 4, GL_FLOAT, FALSE, 0, 0);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
+        glBindVertexArray(vao);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -61,6 +95,9 @@ int main(void)
         glfwPollEvents();
     }
 
+    glDeleteBuffers(2, buffers);
+    glDeleteVertexArrays(1, &vao);
+    glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
 }
@@ -68,6 +105,7 @@ int main(void)
 GLuint loadShader(GLenum shaderType, const char* path) {
     FILE* fp;
     long lSize;
+    int iSize;
     char* buffer;
     GLuint shader;
     GLuint ret = 0;
@@ -82,6 +120,8 @@ GLuint loadShader(GLenum shaderType, const char* path) {
     lSize = ftell(fp);
     rewind(fp);
 
+    iSize = (int) lSize;
+
     buffer = calloc(1, lSize+1);
     if (!buffer) {
         fprintf(stderr, "Memory allocation failed for \"%s\"", path);
@@ -94,7 +134,7 @@ GLuint loadShader(GLenum shaderType, const char* path) {
     }
 
     shader = glCreateShader(shaderType);
-    glShaderSource(shader, 1, &buffer, &lSize);
+    glShaderSource(shader, 1, (const char* const*)&buffer, &iSize);
     glCompileShader(shader);
     ret = shader;
 

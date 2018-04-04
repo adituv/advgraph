@@ -1,4 +1,5 @@
 #include "GraphicsEngine.h"
+#include "GLFWException.h"
 
 #include <fstream>
 #include <vector>

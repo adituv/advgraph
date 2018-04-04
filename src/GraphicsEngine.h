@@ -1,12 +1,8 @@
 #ifndef GRAPHICSENGINE_H_
 #define GRAPHICSENGINE_H_
 
-#include <memory>
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
-#include "GLFWException.h"
 
 // Singleton class for the graphics engine.  Only supports a single window.
 class GraphicsEngine {

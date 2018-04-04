@@ -1,7 +1,9 @@
 cmake_minimum_required (VERSION 2.6)
 Project (advgraph)
 
-file(GLOB_RECURSE advgraph_SOURCES "src/*.c")
+set (CMAKE_CXX_STANDARD 14)
+
+file(GLOB_RECURSE advgraph_SOURCES "src/*.cpp")
 file(GLOB_RECURSE advgraph_HEADERS "src/*.h")
 include_directories("src")
 
